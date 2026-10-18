@@ -149,6 +149,11 @@ h1,h2,h3{text-wrap:balance}
 .about{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start}
 .facts{display:grid;gap:14px}.facts div{padding-bottom:14px;border-bottom:1px solid var(--line)}
 .facts dt{font:400 12.5px var(--mono);color:#8b93ad}.facts dd{font-size:.95rem}
+.search{margin-top:26px;max-width:36em;padding:18px 20px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}
+.search p{margin:0}
+.search-title{display:flex;align-items:baseline;gap:9px;font:500 14px/1.4 var(--sans);color:var(--text)}
+.search-title::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--green);transform:translateY(-1px)}
+.search-item{margin-top:6px;padding-left:18px;font:400 13px/1.5 var(--sans);color:var(--muted)}
 .card{display:flex;flex-direction:column;padding:0;overflow:hidden}
 .card:hover{transform:translateY(-3px)}
 .card .body{padding:20px;display:flex;flex-direction:column;flex:1}
