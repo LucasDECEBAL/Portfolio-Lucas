@@ -76,7 +76,16 @@ const closeLightbox = () => {
 
 document.querySelectorAll('.project-visual img').forEach(img => {
   img.style.cursor = 'zoom-in';
+  img.tabIndex = 0;
+  img.setAttribute('role', 'button');
+  img.setAttribute('aria-label', img.alt ? `Agrandir l'image : ${img.alt}` : "Agrandir l'image du projet");
   img.addEventListener('click', () => openLightbox(img));
+  img.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openLightbox(img);
+    }
+  });
 });
 
 if (modalClose) modalClose.addEventListener('click', closeLightbox);
