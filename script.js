@@ -96,6 +96,8 @@
     gsap.registerPlugin(ScrollTrigger);
 
     gsap.utils.toArray('[data-reveal]').forEach((el) => {
+      // Ne pas masquer ce qui est déjà visible à l'écran (évite tout contenu bloqué).
+      if (el.getBoundingClientRect().top < innerHeight * 0.9) return;
       gsap.from(el, {
         y: 30,
         opacity: 0,

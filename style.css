@@ -501,7 +501,12 @@ html.lenis, html.lenis body { height: auto; }
 }
 .project-media:hover img { filter: brightness(1.06); }
 
-.project--feature .project-media { aspect-ratio: 16 / 9; }
+.project--feature .project-media { aspect-ratio: 2 / 1; }
+.project--feature .project-media img {
+  object-fit: contain;
+  object-position: center;
+  will-change: auto;
+}
 
 .project--split {
   display: grid;
@@ -513,6 +518,7 @@ html.lenis, html.lenis body { height: auto; }
 .project--split.project--reverse .project-info { order: 1; }
 
 .project-media--phone {
+  aspect-ratio: 4 / 3;
   display: grid;
   place-items: center;
   background:
