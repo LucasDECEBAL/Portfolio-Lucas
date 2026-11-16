@@ -107,24 +107,6 @@
       });
     });
 
-    gsap.utils.toArray('[data-parallax] img').forEach((img) => {
-      gsap.fromTo(
-        img,
-        { yPercent: -7, scale: 1.12 },
-        {
-          yPercent: 7,
-          scale: 1.12,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: img.closest('[data-parallax]'),
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: true,
-          },
-        }
-      );
-    });
-
     const progress = document.getElementById('progress');
     if (progress) {
       gsap.to(progress, {
