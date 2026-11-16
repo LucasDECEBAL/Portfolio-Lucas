@@ -1,111 +1,253 @@
-/* Portfolio Lucas DECEBAL-DANGER */
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+/* Portfolio Lucas Decebal-Danger — premium / cinematic */
+(function () {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const hasGSAP = typeof window.gsap !== 'undefined';
 
-/* ===== À MODIFIER : URL exacte des dépôts GitHub (laisser vide = bouton masqué) ===== */
-const REPOS = { agriscan: '' };
-document.querySelectorAll('[data-repo]').forEach(a => {
-  const url = REPOS[a.dataset.repo];
-  if (url) { a.href = url; a.hidden = false; }
-});
+  /* Année */
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-/* Année du footer */
-document.getElementById('year').textContent = new Date().getFullYear();
+  /* En-tête : masqué au défilement vers le bas, révélé vers le haut */
+  const head = document.getElementById('site-head');
+  let lastY = window.scrollY;
 
-/* Menu mobile : ouverture, fermeture après clic, touche Échap */
-const nav = document.getElementById('nav'), btn = document.getElementById('menu-btn'), menu = document.getElementById('menu');
-const setMenu = open => { menu.classList.toggle('open', open); btn.setAttribute('aria-expanded', open); btn.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu'); };
-btn.addEventListener('click', () => setMenu(btn.getAttribute('aria-expanded') !== 'true'));
-menu.addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
-addEventListener('keydown', e => { if (e.key === 'Escape') { setMenu(false); btn.focus(); } });
-
-/* En-tête : fond au défilement */
-const onScroll = () => nav.classList.toggle('scrolled', scrollY > 20);
-addEventListener('scroll', onScroll, { passive: true }); onScroll();
-
-/* Apparition des sections (le contenu reste visible sans JS) */
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .08 });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-/* Lien actif de la navigation */
-const links = [...menu.querySelectorAll('a[href^="#"]')];
-const spy = new IntersectionObserver(es => es.forEach(e => {
-  if (e.isIntersecting) links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
-}), { rootMargin: '-40% 0px -55% 0px' });
-links.forEach(a => { const s = document.querySelector(a.getAttribute('href')); if (s) spy.observe(s); });
-
-/* Tache lumineuse discrète qui suit la souris (ordinateur uniquement) */
-const blob = document.getElementById('mouse-blob');
-if (fine && !reduce) addEventListener('pointermove', e => { blob.style.transform = `translate3d(${e.clientX}px,${e.clientY}px,0)`; }, { passive: true });
-else blob.style.display = 'none';
-
-/* Lightbox pour agrandir les images des projets */
-const modal = document.getElementById('image-modal');
-const modalImage = document.getElementById('lightbox-image');
-const modalClose = document.getElementById('lightbox-close');
-let lastFocusedElement = null;
-
-if (modal) {
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-label', 'Vue agrandie du projet');
-  modal.setAttribute('aria-hidden', 'true');
-  modal.tabIndex = -1;
-}
-
-const openLightbox = image => {
-  if (!modal || !modalImage || !modalClose) return;
-  lastFocusedElement = document.activeElement;
-  modalImage.src = image.src;
-  modalImage.alt = image.alt || 'Image agrandie du projet';
-  modal.classList.add('open');
-  modal.setAttribute('aria-hidden', 'false');
-  modal.setAttribute('aria-modal', 'true');
-  document.body.classList.add('modal-open');
-  modalClose.focus();
-  modal.focus();
-};
-
-const closeLightbox = () => {
-  if (!modal || !modalImage) return;
-  modal.classList.remove('open');
-  modal.setAttribute('aria-hidden', 'true');
-  modal.removeAttribute('aria-modal');
-  document.body.classList.remove('modal-open');
-  if (lastFocusedElement) lastFocusedElement.focus();
-};
-
-document.querySelectorAll('.project-visual img').forEach(img => {
-  img.style.cursor = 'zoom-in';
-  img.tabIndex = 0;
-  img.setAttribute('role', 'button');
-  img.setAttribute('aria-label', img.alt ? `Agrandir l'image : ${img.alt}` : "Agrandir l'image du projet");
-  img.addEventListener('click', () => openLightbox(img));
-  img.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openLightbox(img);
+  function onScroll() {
+    const y = window.scrollY;
+    if (head) {
+      head.classList.toggle('is-scrolled', y > 40);
+      if (y > lastY + 6 && y > 260) head.classList.add('is-hidden');
+      else if (y < lastY - 6) head.classList.remove('is-hidden');
     }
-  });
-});
+    lastY = y;
+  }
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-if (modalClose) modalClose.addEventListener('click', closeLightbox);
-if (modal) modal.addEventListener('click', e => { if (e.target === modal) closeLightbox(); });
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && modal && modal.classList.contains('open')) closeLightbox();
+  /* Défilement fluide */
+  let lenis = null;
+  if (hasGSAP && window.Lenis && fine && !reduce) {
+    lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    if (window.ScrollTrigger) lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
 
-  if (e.key === 'Tab' && modal && modal.classList.contains('open')) {
-    const elements = [modalClose];
-    const first = elements[0];
-    const last = elements[elements.length - 1];
+    document.querySelectorAll('a[href^="#"]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        const id = link.getAttribute('href');
+        if (!id || id.length < 2) return;
+        const target = document.querySelector(id);
+        if (!target) return;
+        event.preventDefault();
+        lenis.scrollTo(target, { offset: -80 });
+      });
+    });
+  }
 
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    }
+  /* Menu mobile */
+  const menuBtn = document.getElementById('menu-btn');
+  const nav = document.getElementById('nav');
 
-    if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
+  function setMenu(open) {
+    if (!nav || !menuBtn) return;
+    nav.classList.toggle('is-open', open);
+    document.body.classList.toggle('menu-open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    menuBtn.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    if (lenis) open ? lenis.stop() : lenis.start();
+  }
+
+  if (menuBtn && nav) {
+    menuBtn.addEventListener('click', () => {
+      setMenu(menuBtn.getAttribute('aria-expanded') !== 'true');
+    });
+    nav.addEventListener('click', (event) => {
+      if (event.target.closest('a')) setMenu(false);
+    });
+    addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && nav.classList.contains('is-open')) {
+        setMenu(false);
+        menuBtn.focus();
+      }
+    });
+  }
+
+  /* Préloader */
+  const preloader = document.getElementById('preloader');
+  const hidePreloader = () => {
+    if (preloader) preloader.style.display = 'none';
+  };
+
+  if (!hasGSAP || reduce) {
+    hidePreloader();
+  } else {
+    const tl = gsap.timeline({ onComplete: hidePreloader });
+    tl.to('.preloader-bar i', { scaleX: 1, duration: 0.85, ease: 'power2.inOut' })
+      .to('.preloader-mark', { opacity: 0, duration: 0.3, ease: 'power2.in' }, '-=0.1')
+      .to('.preloader-door--top', { yPercent: -100, duration: 0.9, ease: 'power4.inOut' }, '-=0.05')
+      .to('.preloader-door--bottom', { yPercent: 100, duration: 0.9, ease: 'power4.inOut' }, '<')
+      .from('.hero-line > span', { yPercent: 115, duration: 1.1, stagger: 0.12, ease: 'power4.out' }, '-=0.55')
+      .from('.hero-eyebrow, .hero-statement, .hero-avail, .hero-scroll',
+        { y: 16, opacity: 0, duration: 0.8, stagger: 0.06, ease: 'power3.out' }, '-=0.7');
+  }
+
+  /* Animations liées au scroll */
+  if (hasGSAP && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray('[data-reveal]').forEach((el) => {
+      gsap.from(el, {
+        y: 30,
+        opacity: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+      });
+    });
+
+    gsap.utils.toArray('[data-parallax] img').forEach((img) => {
+      gsap.fromTo(
+        img,
+        { yPercent: -7, scale: 1.12 },
+        {
+          yPercent: 7,
+          scale: 1.12,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: img.closest('[data-parallax]'),
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
+        }
+      );
+    });
+
+    const progress = document.getElementById('progress');
+    if (progress) {
+      gsap.to(progress, {
+        scaleX: 1,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+        },
+      });
     }
   }
-});
+
+  /* Curseur personnalisé (desktop uniquement) */
+  if (fine && !reduce) {
+    const cursor = document.getElementById('cursor');
+    if (cursor) {
+      const dot = cursor.querySelector('.cursor-dot');
+      const ring = cursor.querySelector('.cursor-ring');
+      let mx = innerWidth / 2;
+      let my = innerHeight / 2;
+      let rx = mx;
+      let ry = my;
+
+      addEventListener(
+        'pointermove',
+        (event) => {
+          mx = event.clientX;
+          my = event.clientY;
+          dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
+        },
+        { passive: true }
+      );
+
+      (function loop() {
+        rx += (mx - rx) * 0.14;
+        ry += (my - ry) * 0.14;
+        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
+        requestAnimationFrame(loop);
+      })();
+
+      document.body.classList.add('has-cursor');
+
+      document.querySelectorAll('a, button, [data-magnetic]').forEach((el) => {
+        el.addEventListener('pointerenter', () => document.body.classList.add('cursor-grow'));
+        el.addEventListener('pointerleave', () => document.body.classList.remove('cursor-grow'));
+      });
+    }
+  }
+
+  /* Boutons magnétiques */
+  if (hasGSAP && fine && !reduce) {
+    document.querySelectorAll('[data-magnetic]').forEach((el) => {
+      const xTo = gsap.quickTo(el, 'x', { duration: 0.5, ease: 'power3' });
+      const yTo = gsap.quickTo(el, 'y', { duration: 0.5, ease: 'power3' });
+
+      el.addEventListener('pointermove', (event) => {
+        const rect = el.getBoundingClientRect();
+        xTo((event.clientX - rect.left - rect.width / 2) * 0.28);
+        yTo((event.clientY - rect.top - rect.height / 2) * 0.38);
+      });
+      el.addEventListener('pointerleave', () => {
+        xTo(0);
+        yTo(0);
+      });
+    });
+  }
+
+  /* Lightbox */
+  const modal = document.getElementById('image-modal');
+  const modalImage = document.getElementById('lightbox-image');
+  const closeBtn = document.getElementById('lightbox-close');
+  let opener = null;
+
+  function openModal(src, alt) {
+    if (!modal || !modalImage || !closeBtn) return;
+    modalImage.src = src;
+    modalImage.alt = alt || 'Image agrandie du projet';
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Image agrandie');
+    document.body.classList.add('is-locked');
+    if (lenis) lenis.stop();
+    closeBtn.focus();
+  }
+
+  function closeModal() {
+    if (!modal || !modalImage) return;
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    modal.removeAttribute('aria-modal');
+    document.body.classList.remove('is-locked');
+    if (lenis) lenis.start();
+    if (opener) opener.focus();
+  }
+
+  document.querySelectorAll('[data-zoom]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const image = button.querySelector('img');
+      if (!image) return;
+      opener = button;
+      openModal(image.currentSrc || image.src, image.alt);
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (modal) {
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeModal();
+    });
+  }
+
+  addEventListener('keydown', (event) => {
+    if (!modal || !modal.classList.contains('is-open')) return;
+    if (event.key === 'Escape') {
+      closeModal();
+      return;
+    }
+    if (event.key === 'Tab') {
+      event.preventDefault();
+      closeBtn.focus();
+    }
+  });
+})();
