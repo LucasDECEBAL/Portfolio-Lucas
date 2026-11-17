@@ -41,8 +41,13 @@
 </div>
 
 <div class="cursor" id="cursor" aria-hidden="true">
-  <span class="cursor-dot"></span>
-  <span class="cursor-ring"></span>
+  <div class="cursor-inner">
+    <svg class="cursor-glove" viewBox="0 0 44 46" width="38" height="38" aria-hidden="true">
+      <path class="glove-fill" d="M18 2.5C18 1.1 19.1 0 20.5 0S23 1.1 23 2.5V21.8l1.6-.9c1.6-.9 3.6-.3 4.5 1.3l.6 1.1 2.2-.8c1.7-.6 3.6.2 4.3 1.9l.6 1.4 1.5-.4c1.8-.4 3.6.8 3.9 2.6l.6 3.8c.6 3.6-.8 7.2-3.6 9.6l-3.3 2.8H22.2L14.6 38c-2.4-1.9-3.8-4.8-3.8-7.9V25c0-1.9 1.5-3.4 3.4-3.4.9 0 1.8.4 2.4 1L18 24V2.5Z"/>
+      <path class="glove-line" d="M27 24.5V29M31.6 24.8V29.3M36 26.5V30.5"/>
+    </svg>
+    <span class="cursor-spark" aria-hidden="true">✦</span>
+  </div>
 </div>
 
 <div class="noise" aria-hidden="true"></div>
@@ -92,10 +97,22 @@
     <div class="spec-item"><span class="spec-label">Lieu</span><span class="spec-value">Île-de-France, en présentiel</span></div>
   </section>
 
+  <section class="section" id="apropos">
+    <div class="wrap about">
+      <div class="about-head">
+        <p class="section-label" data-reveal>À propos</p>
+        <h2 class="section-title" data-reveal>Apprendre en<br>construisant.</h2>
+      </div>
+      <div class="about-body">
+        <p data-reveal>Je suis étudiant en informatique à Sup de Vinci, avec un intérêt marqué pour le développement web, les systèmes, les réseaux, l'automatisation et la cybersécurité. J'aime concevoir des solutions concrètes, apprendre en pratiquant et travailler sur des projets qui combinent ergonomie, logique métier et qualité technique.</p>
+      </div>
+    </div>
+  </section>
+
   <section class="section" id="projets">
     <header class="section-head wrap">
       <p class="section-label" data-reveal>Projets</p>
-      <h2 class="section-title" data-reveal>Cinq projets,<br>dont un en production.</h2>
+      <h2 class="section-title" data-reveal>Quatre projets,<br>dont un en production.</h2>
       <p class="section-intro" data-reveal>Sélection de travaux personnels et académiques, du scanner de sécurité au site e-commerce livré pour un client.</p>
     </header>
 
@@ -171,31 +188,6 @@
           </ul>
           <p class="project-stack">Node.js, Express, Ollama, Swagger, JavaScript</p>
           <p class="project-links"><a class="link-arrow" href="https://github.com/LucasDECEBAL/Projet-Gymshark---Sync" target="_blank" rel="noopener noreferrer">Code source<span aria-hidden="true">↗</span></a></p>
-        </div>
-      </div>
-    </article>
-
-    <article class="project wrap">
-      <div class="project-media project-media--phone">
-        <img class="project-media-bg" src="./assets/images/agriscan.webp" alt="" aria-hidden="true">
-        <button type="button" class="shot" data-zoom aria-label="Agrandir l'image : page d'accueil de l'application AgriScan">
-          <img loading="lazy" decoding="async" src="./assets/images/agriscan.webp" alt="Page d'accueil de l'application AgriScan">
-        </button>
-      </div>
-      <div class="project-info">
-        <div class="project-title-block">
-          <h3>AgriScan</h3>
-          <p class="project-meta">Projet d'étude · TypeScript</p>
-        </div>
-        <div class="project-copy">
-          <p class="project-desc">Application mobile de diagnostic agricole et d'aide à la décision, centrée sur le parcours utilisateur et la lisibilité.</p>
-          <ul class="bullets">
-            <li>Interface mobile pensée pour une consultation rapide.</li>
-            <li>Parcours construit autour des symptômes et recommandations.</li>
-            <li>Stack TypeScript et MongoDB.</li>
-          </ul>
-          <p class="project-stack">TypeScript, MongoDB, frontend, backend</p>
-          <p class="project-links"><a class="link-arrow" href="https://github.com/LucasDECEBAL/Projet-d-etude" target="_blank" rel="noopener noreferrer">Code source<span aria-hidden="true">↗</span></a></p>
         </div>
       </div>
     </article>

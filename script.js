@@ -126,36 +126,44 @@
   if (fine && !reduce) {
     const cursor = document.getElementById('cursor');
     if (cursor) {
-      const dot = cursor.querySelector('.cursor-dot');
-      const ring = cursor.querySelector('.cursor-ring');
-      let mx = innerWidth / 2;
-      let my = innerHeight / 2;
-      let rx = mx;
-      let ry = my;
+      const moveCursor = (x, y) => {
+        cursor.style.transform = `translate3d(${x - 18}px, ${y}px, 0)`;
+      };
 
       addEventListener(
         'pointermove',
-        (event) => {
-          mx = event.clientX;
-          my = event.clientY;
-          dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
-        },
+        (event) => moveCursor(event.clientX, event.clientY),
         { passive: true }
       );
 
-      (function loop() {
-        rx += (mx - rx) * 0.14;
-        ry += (my - ry) * 0.14;
-        ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
-        requestAnimationFrame(loop);
-      })();
+      const hoverables = 'a, button';
+      document.addEventListener('pointerover', (event) => {
+        if (event.target.closest && event.target.closest(hoverables)) {
+          cursor.classList.add('is-hover');
+        }
+      });
+      document.addEventListener('pointerout', (event) => {
+        const from = event.target.closest ? event.target.closest(hoverables) : null;
+        const to =
+          event.relatedTarget && event.relatedTarget.closest
+            ? event.relatedTarget.closest(hoverables)
+            : null;
+        if (from && from !== to) cursor.classList.remove('is-hover');
+      });
+
+      let sparkTimer;
+      addEventListener('pointerdown', () => {
+        cursor.classList.add('is-down');
+        cursor.classList.remove('is-click');
+        void cursor.offsetWidth;
+        cursor.classList.add('is-click');
+        clearTimeout(sparkTimer);
+        sparkTimer = setTimeout(() => cursor.classList.remove('is-click'), 420);
+      });
+      addEventListener('pointerup', () => cursor.classList.remove('is-down'));
 
       document.body.classList.add('has-cursor');
-
-      document.querySelectorAll('a, button, [data-magnetic]').forEach((el) => {
-        el.addEventListener('pointerenter', () => document.body.classList.add('cursor-grow'));
-        el.addEventListener('pointerleave', () => document.body.classList.remove('cursor-grow'));
-      });
+      moveCursor(innerWidth / 2, innerHeight / 2);
     }
   }
 

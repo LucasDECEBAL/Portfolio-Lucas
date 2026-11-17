@@ -14,7 +14,7 @@
   --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "Space Mono", ui-monospace, monospace;
   --pad: clamp(20px, 5vw, 72px);
-  --max: 1440px;
+  --max: 1280px;
   --head-h: 76px;
 }
 
@@ -123,35 +123,62 @@ html.lenis, html.lenis body { height: auto; }
 .cursor {
   position: fixed;
   inset: 0;
-  z-index: 90;
+  z-index: 120;
   pointer-events: none;
   display: none;
+  will-change: transform;
+  transform: translate3d(-100px, -100px, 0);
 }
 .has-cursor .cursor { display: block; }
 
-.cursor-dot,
-.cursor-ring {
+.cursor-inner {
   position: absolute;
   left: 0;
   top: 0;
-  border-radius: 50%;
-  will-change: transform;
+  width: 38px;
+  height: 38px;
+  transform-origin: 18px 0;
+  transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.cursor-dot {
-  width: 6px;
-  height: 6px;
-  background: var(--accent);
+.cursor-glove {
+  display: block;
+  width: 38px;
+  height: 38px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55));
 }
-.cursor-ring {
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(200, 210, 255, 0.35);
-  transition: width 0.25s, height 0.25s, border-color 0.25s;
+.cursor.is-hover .cursor-inner { transform: scale(1.14) rotate(-7deg); }
+.cursor.is-down .cursor-inner { transform: scale(0.86) rotate(4deg); }
+
+.cursor-spark {
+  position: absolute;
+  left: 18px;
+  top: 0;
+  transform: translate(-50%, -50%) scale(0);
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
 }
-.cursor-grow .cursor-ring {
-  width: 54px;
-  height: 54px;
-  border-color: var(--accent);
+.cursor.is-click .cursor-spark { animation: spark 0.4s ease-out; }
+
+@keyframes spark {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.2); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+}
+.glove-fill {
+  fill: #0B1020;
+  stroke: #F4F6FF;
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  paint-order: stroke;
+}
+.glove-line {
+  fill: none;
+  stroke: #F4F6FF;
+  stroke-width: 1.5;
+  stroke-linecap: round;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -284,11 +311,11 @@ html.lenis, html.lenis body { height: auto; }
 
 .hero {
   position: relative;
-  min-height: 100dvh;
+  min-height: 92dvh;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: calc(var(--head-h) + 20px) var(--pad) clamp(28px, 5vw, 52px);
+  padding: calc(var(--head-h) + 20px) var(--pad) clamp(24px, 4vw, 40px);
   overflow: hidden;
 }
 
@@ -338,7 +365,7 @@ html.lenis, html.lenis body { height: auto; }
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px 32px;
   align-items: end;
-  margin-top: clamp(26px, 4vw, 44px);
+  margin-top: clamp(18px, 2.5vw, 30px);
   padding-top: 20px;
   border-top: 1px solid var(--line);
 }
@@ -413,7 +440,7 @@ html.lenis, html.lenis body { height: auto; }
 .spec {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  padding: clamp(26px, 4vw, 40px) var(--pad);
+  padding: clamp(20px, 3vw, 30px) var(--pad);
   border-top: 1px solid var(--line);
 }
 
@@ -440,11 +467,11 @@ html.lenis, html.lenis body { height: auto; }
 /* ---------- Sections ---------------------------------------------------- */
 
 .section {
-  padding: clamp(88px, 12vw, 170px) var(--pad);
+  padding: clamp(56px, 7vw, 104px) var(--pad);
   border-top: 1px solid var(--line);
 }
 
-.section-head { margin-bottom: clamp(40px, 6vw, 76px); }
+.section-head { margin-bottom: clamp(26px, 3.5vw, 46px); }
 
 .section-label {
   margin-bottom: 20px;
@@ -466,9 +493,23 @@ html.lenis, html.lenis body { height: auto; }
   color: var(--smoke);
 }
 
+/* À propos */
+.about {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+.about-body p {
+  max-width: 58ch;
+  color: var(--smoke);
+  font-size: clamp(1rem, 1.3vw, 1.12rem);
+  line-height: 1.65;
+}
+
 /* ---------- Projets ----------------------------------------------------- */
 
-.project { margin-bottom: clamp(70px, 9vw, 130px); }
+.project { margin-bottom: clamp(40px, 5vw, 72px); }
 .project:last-child { margin-bottom: 0; }
 
 .project-media {
@@ -477,6 +518,7 @@ html.lenis, html.lenis body { height: auto; }
   aspect-ratio: 2 / 1;
   background: var(--ink-2);
   border: 1px solid var(--line);
+  border-radius: 12px;
 }
 
 .shot {
@@ -501,31 +543,11 @@ html.lenis, html.lenis body { height: auto; }
 }
 .project-media:hover .shot img { filter: brightness(1.06); }
 
-/* Téléphone : fond flou pour remplir le cadre sans rogner l'écran. */
-.project-media-bg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: blur(30px) brightness(0.36) saturate(1.1);
-  transform: scale(1.18);
-  opacity: 0.65;
-  pointer-events: none;
-}
-.project-media--phone .shot {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-rows: 100%;
-  place-items: center;
-}
-
 .project-info {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(24px, 4vw, 64px);
-  padding-top: clamp(22px, 3vw, 34px);
+  gap: clamp(20px, 3vw, 48px);
+  padding-top: clamp(16px, 2vw, 24px);
 }
 
 .project-title-block h3 {
@@ -598,7 +620,7 @@ html.lenis, html.lenis body { height: auto; }
   grid-template-columns: 150px minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: clamp(20px, 4vw, 52px);
   align-items: start;
-  padding: clamp(26px, 4vw, 40px) 0;
+  padding: clamp(20px, 3vw, 30px) 0;
   border-bottom: 1px solid var(--line);
 }
 
@@ -663,7 +685,7 @@ html.lenis, html.lenis body { height: auto; }
 
 /* ---------- Contact ----------------------------------------------------- */
 
-.section--contact { padding-bottom: clamp(80px, 12vw, 160px); }
+.section--contact { padding-bottom: clamp(56px, 8vw, 104px); }
 
 .contact-title {
   font-family: var(--serif);
@@ -676,7 +698,7 @@ html.lenis, html.lenis body { height: auto; }
 
 .contact-mail {
   display: inline-block;
-  margin-top: clamp(28px, 4vw, 44px);
+  margin-top: clamp(20px, 3vw, 32px);
   padding-bottom: 6px;
   border-bottom: 1px solid var(--line);
   font-family: var(--serif);
@@ -776,6 +798,7 @@ html.lenis, html.lenis body { height: auto; }
   max-width: min(94vw, 1300px);
   max-height: 88vh;
   border: 1px solid var(--line);
+  border-radius: 10px;
   object-fit: contain;
   background: var(--ink-2);
 }
@@ -852,6 +875,7 @@ body.is-locked { overflow: hidden; }
 
   .exp, .exp--mini { grid-template-columns: 1fr; gap: 10px; }
 
+  .about { grid-template-columns: 1fr; gap: 20px; }
   .skills { grid-template-columns: 1fr; }
   .path { grid-template-columns: 1fr; }
 }
